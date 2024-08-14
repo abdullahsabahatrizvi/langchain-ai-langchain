@@ -49,6 +49,7 @@ class CustomAddTextsVectorstore(VectorStore):
     def get_by_ids(self, ids: Sequence[str], /) -> List[Document]:
         return [self.store[id] for id in ids if id in self.store]
 
+    @classmethod
     def from_texts(  # type: ignore
         cls,
         texts: List[str],

@@ -17,7 +17,7 @@ from typing import (
     Union,
 )
 
-from typing_extensions import TypeAlias
+from typing_extensions import TypeAlias, override
 
 from langchain_core._api import deprecated
 from langchain_core.messages import (
@@ -126,6 +126,7 @@ class BaseLanguageModel(
             return verbose
 
     @property
+    @override
     def InputType(self) -> TypeAlias:
         """Get the input type for this runnable."""
         from langchain_core.prompt_values import (

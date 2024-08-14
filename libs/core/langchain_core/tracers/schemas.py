@@ -16,7 +16,7 @@ from langchain_core.pydantic_v1 import BaseModel, Field, root_validator
 
 
 @deprecated("0.1.0", alternative="Use string instead.", removal="0.3.0")
-def RunTypeEnum() -> Type[RunTypeEnumDep]:
+def RunTypeEnum() -> Type[RunTypeEnumDep]:  # noqa: N802
     """RunTypeEnum."""
     warnings.warn(
         "RunTypeEnum is deprecated. Please directly use a string instead"

@@ -30,7 +30,7 @@ from typing import (
     Union,
 )
 
-from typing_extensions import TypeGuard
+from typing_extensions import TypeGuard, override
 
 from langchain_core.pydantic_v1 import BaseConfig, BaseModel
 from langchain_core.pydantic_v1 import create_model as _create_model_base
@@ -136,6 +136,7 @@ class IsLocalDict(ast.NodeVisitor):
         self.name = name
         self.keys = keys
 
+    @override
     def visit_Subscript(self, node: ast.Subscript) -> Any:
         """Visit a subscript node.
 
@@ -155,6 +156,7 @@ class IsLocalDict(ast.NodeVisitor):
             # we've found a subscript access on the name we're looking for
             self.keys.add(node.slice.value)
 
+    @override
     def visit_Call(self, node: ast.Call) -> Any:
         """Visit a call node.
 
@@ -183,6 +185,7 @@ class IsFunctionArgDict(ast.NodeVisitor):
     def __init__(self) -> None:
         self.keys: Set[str] = set()
 
+    @override
     def visit_Lambda(self, node: ast.Lambda) -> Any:
         """Visit a lambda function.
 
@@ -197,6 +200,7 @@ class IsFunctionArgDict(ast.NodeVisitor):
         input_arg_name = node.args.args[0].arg
         IsLocalDict(input_arg_name, self.keys).visit(node.body)
 
+    @override
     def visit_FunctionDef(self, node: ast.FunctionDef) -> Any:
         """Visit a function definition.
 
@@ -211,6 +215,7 @@ class IsFunctionArgDict(ast.NodeVisitor):
         input_arg_name = node.args.args[0].arg
         IsLocalDict(input_arg_name, self.keys).visit(node)
 
+    @override
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> Any:
         """Visit an async function definition.
 
@@ -233,6 +238,7 @@ class NonLocals(ast.NodeVisitor):
         self.loads: Set[str] = set()
         self.stores: Set[str] = set()
 
+    @override
     def visit_Name(self, node: ast.Name) -> Any:
         """Visit a name node.
 
@@ -247,6 +253,7 @@ class NonLocals(ast.NodeVisitor):
         elif isinstance(node.ctx, ast.Store):
             self.stores.add(node.id)
 
+    @override
     def visit_Attribute(self, node: ast.Attribute) -> Any:
         """Visit an attribute node.
 
@@ -273,6 +280,7 @@ class FunctionNonLocals(ast.NodeVisitor):
     def __init__(self) -> None:
         self.nonlocals: Set[str] = set()
 
+    @override
     def visit_FunctionDef(self, node: ast.FunctionDef) -> Any:
         """Visit a function definition.
 
@@ -286,6 +294,7 @@ class FunctionNonLocals(ast.NodeVisitor):
         visitor.visit(node)
         self.nonlocals.update(visitor.loads - visitor.stores)
 
+    @override
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> Any:
         """Visit an async function definition.
 
@@ -299,6 +308,7 @@ class FunctionNonLocals(ast.NodeVisitor):
         visitor.visit(node)
         self.nonlocals.update(visitor.loads - visitor.stores)
 
+    @override
     def visit_Lambda(self, node: ast.Lambda) -> Any:
         """Visit a lambda function.
 
@@ -321,6 +331,7 @@ class GetLambdaSource(ast.NodeVisitor):
         self.source: Optional[str] = None
         self.count = 0
 
+    @override
     def visit_Lambda(self, node: ast.Lambda) -> Any:
         """Visit a lambda function.
 

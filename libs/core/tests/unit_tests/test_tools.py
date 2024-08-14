@@ -1359,7 +1359,7 @@ class InjectedTool(BaseTool):
         return y
 
 
-class fooSchema(BaseModel):
+class fooSchema(BaseModel):  # noqa: N801
     """foo."""
 
     x: int = Field(..., description="abc")
@@ -1466,14 +1466,14 @@ def test_tool_injected_arg_with_schema(tool_: BaseTool) -> None:
 
 
 def test_tool_inherited_injected_arg() -> None:
-    class barSchema(BaseModel):
+    class BarSchema(BaseModel):
         """bar."""
 
         y: Annotated[str, "foobar comment", InjectedToolArg()] = Field(
             ..., description="123"
         )
 
-    class fooSchema(barSchema):
+    class FooSchema(BarSchema):
         """foo."""
 
         x: int = Field(..., description="abc")
@@ -1481,14 +1481,14 @@ def test_tool_inherited_injected_arg() -> None:
     class InheritedInjectedArgTool(BaseTool):
         name: str = "foo"
         description: str = "foo."
-        args_schema: Type[BaseModel] = fooSchema
+        args_schema: Type[BaseModel] = FooSchema
 
         def _run(self, x: int, y: str) -> Any:
             return y
 
     tool_ = InheritedInjectedArgTool()
     assert tool_.get_input_schema().schema() == {
-        "title": "fooSchema",
+        "title": "FooSchema",
         "description": "foo.",
         "type": "object",
         "properties": {

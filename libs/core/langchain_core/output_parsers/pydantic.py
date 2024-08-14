@@ -2,6 +2,7 @@ import json
 from typing import Generic, List, Type
 
 import pydantic  # pydantic: ignore
+from typing_extensions import override
 
 from langchain_core.exceptions import OutputParserException
 from langchain_core.output_parsers import JsonOutputParser
@@ -101,6 +102,7 @@ class PydanticOutputParser(JsonOutputParser, Generic[TBaseModel]):
         return "pydantic"
 
     @property
+    @override
     def OutputType(self) -> Type[TBaseModel]:
         """Return the pydantic model."""
         return self.pydantic_object

@@ -13,7 +13,7 @@ from typing import (
     Union,
 )
 
-from typing_extensions import get_args
+from typing_extensions import get_args, override
 
 from langchain_core.language_models import LanguageModelOutput
 from langchain_core.messages import AnyMessage, BaseMessage
@@ -68,11 +68,13 @@ class BaseGenerationOutputParser(
     """Base class to parse the output of an LLM call."""
 
     @property
+    @override
     def InputType(self) -> Any:
         """Return the input type for the parser."""
         return Union[str, AnyMessage]
 
     @property
+    @override
     def OutputType(self) -> Type[T]:
         """Return the output type for the parser."""
         # even though mypy complains this isn't valid,
@@ -153,11 +155,13 @@ class BaseOutputParser(
     """  # noqa: E501
 
     @property
+    @override
     def InputType(self) -> Any:
         """Return the input type for the parser."""
         return Union[str, AnyMessage]
 
     @property
+    @override
     def OutputType(self) -> Type[T]:
         """Return the output type for the parser.
 

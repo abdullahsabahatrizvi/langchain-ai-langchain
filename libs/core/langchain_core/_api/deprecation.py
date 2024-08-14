@@ -236,7 +236,7 @@ def deprecated(
             _name = _name or cast(Union[Type, Callable], obj.fget).__qualname__
             old_doc = obj.__doc__
 
-            class _deprecated_property(property):
+            class _DeprecatedProperty(property):
                 """A deprecated property."""
 
                 def __init__(self, fget=None, fset=None, fdel=None, doc=None):  # type: ignore[no-untyped-def]
@@ -269,7 +269,7 @@ def deprecated(
                 """Finalize the property."""
                 return cast(
                     T,
-                    _deprecated_property(
+                    _DeprecatedProperty(
                         fget=obj.fget, fset=obj.fset, fdel=obj.fdel, doc=new_doc
                     ),
                 )

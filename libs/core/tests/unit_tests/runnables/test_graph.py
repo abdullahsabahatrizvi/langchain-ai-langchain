@@ -1,6 +1,7 @@
 from typing import Optional
 
 from syrupy import SnapshotAssertion
+from typing_extensions import override
 
 from langchain_core.language_models import FakeListLLM
 from langchain_core.output_parsers.list import CommaSeparatedListOutputParser
@@ -221,9 +222,11 @@ def test_runnable_get_graph_with_invalid_input_type() -> None:
 
     class InvalidInputTypeRunnable(Runnable[int, int]):
         @property
+        @override
         def InputType(self) -> type:
             raise TypeError()
 
+        @override
         def invoke(
             self,
             input: int,
@@ -243,9 +246,11 @@ def test_runnable_get_graph_with_invalid_output_type() -> None:
 
     class InvalidOutputTypeRunnable(Runnable[int, int]):
         @property
+        @override
         def OutputType(self) -> type:
             raise TypeError()
 
+        @override
         def invoke(
             self,
             input: int,

@@ -41,7 +41,15 @@ python = ">=3.12.4"
 [tool.poetry.extras]
 
 [tool.ruff.lint]
-select = [ "E", "F", "I", "T201",]
+select = [ "E", "F", "I", "N", "T201",]
+
+[tool.ruff.lint.pep8-naming]
+classmethod-decorators = [
+    "classmethod",
+    "langchain_core.pydantic_v1.validator",
+    "langchain_core.pydantic_v1.root_validator",
+    "langchain_core.utils.pydantic.pre_init"
+]
 
 [tool.coverage.run]
 omit = [ "tests/*",]
