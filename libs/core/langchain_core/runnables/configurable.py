@@ -20,6 +20,8 @@ from typing import (
 )
 from weakref import WeakValueDictionary
 
+from typing_extensions import override
+
 from langchain_core.pydantic_v1 import BaseModel
 from langchain_core.runnables.base import Runnable, RunnableSerializable
 from langchain_core.runnables.config import (
@@ -71,10 +73,12 @@ class DynamicRunnable(RunnableSerializable[Input, Output]):
         return ["langchain", "schema", "runnable"]
 
     @property
+    @override
     def InputType(self) -> Type[Input]:
         return self.default.InputType
 
     @property
+    @override
     def OutputType(self) -> Type[Output]:
         return self.default.OutputType
 

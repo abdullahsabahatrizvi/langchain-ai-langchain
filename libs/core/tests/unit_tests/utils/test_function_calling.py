@@ -46,7 +46,7 @@ from langchain_core.utils.function_calling import (
 
 @pytest.fixture()
 def pydantic() -> Type[BaseModel]:
-    class dummy_function(BaseModel):
+    class dummy_function(BaseModel):  # noqa: N801
         """dummy function"""
 
         arg1: int = Field(..., description="foo")
@@ -56,7 +56,7 @@ def pydantic() -> Type[BaseModel]:
 
 
 @pytest.fixture()
-def Annotated_function() -> Callable:
+def annotated_function() -> Callable:
     def dummy_function(
         arg1: ExtensionsAnnotated[int, "foo"],
         arg2: ExtensionsAnnotated[Literal["bar", "baz"], "one of 'bar', 'baz'"],
@@ -112,7 +112,7 @@ def dummy_tool() -> BaseTool:
 
 @pytest.fixture()
 def dummy_pydantic() -> Type[BaseModel]:
-    class dummy_function(BaseModel):
+    class dummy_function(BaseModel):  # noqa: N801
         """dummy function"""
 
         arg1: int = Field(..., description="foo")
@@ -123,7 +123,7 @@ def dummy_pydantic() -> Type[BaseModel]:
 
 @pytest.fixture()
 def dummy_pydantic_v2() -> Type[BaseModelV2Maybe]:
-    class dummy_function(BaseModelV2Maybe):
+    class dummy_function(BaseModelV2Maybe):  # noqa: N801
         """dummy function"""
 
         arg1: int = FieldV2Maybe(..., description="foo")
@@ -136,7 +136,7 @@ def dummy_pydantic_v2() -> Type[BaseModelV2Maybe]:
 
 @pytest.fixture()
 def dummy_typing_typed_dict() -> Type:
-    class dummy_function(TypingTypedDict):
+    class dummy_function(TypingTypedDict):  # noqa: N801
         """dummy function"""
 
         arg1: TypingAnnotated[int, ..., "foo"]  # noqa: F821
@@ -147,7 +147,7 @@ def dummy_typing_typed_dict() -> Type:
 
 @pytest.fixture()
 def dummy_typing_typed_dict_docstring() -> Type:
-    class dummy_function(TypingTypedDict):
+    class dummy_function(TypingTypedDict):  # noqa: N801
         """dummy function
 
         Args:
@@ -163,7 +163,7 @@ def dummy_typing_typed_dict_docstring() -> Type:
 
 @pytest.fixture()
 def dummy_extensions_typed_dict() -> Type:
-    class dummy_function(ExtensionsTypedDict):
+    class dummy_function(ExtensionsTypedDict):  # noqa: N801
         """dummy function"""
 
         arg1: ExtensionsAnnotated[int, ..., "foo"]
@@ -174,7 +174,7 @@ def dummy_extensions_typed_dict() -> Type:
 
 @pytest.fixture()
 def dummy_extensions_typed_dict_docstring() -> Type:
-    class dummy_function(ExtensionsTypedDict):
+    class dummy_function(ExtensionsTypedDict):  # noqa: N801
         """dummy function
 
         Args:
@@ -234,7 +234,7 @@ def test_convert_to_openai_function(
     function: Callable,
     dummy_tool: BaseTool,
     json_schema: Dict,
-    Annotated_function: Callable,
+    annotated_function: Callable,
     dummy_pydantic: Type[BaseModel],
     runnable: Runnable,
     dummy_typing_typed_dict: Type,
@@ -267,7 +267,7 @@ def test_convert_to_openai_function(
         expected,
         Dummy.dummy_function,
         DummyWithClassMethod.dummy_function,
-        Annotated_function,
+        annotated_function,
         dummy_pydantic,
         dummy_typing_typed_dict,
         dummy_typing_typed_dict_docstring,
@@ -454,20 +454,20 @@ def test__convert_typed_dict_to_openai_function(
     use_extension_typed_dict: bool, use_extension_annotated: bool
 ) -> None:
     if use_extension_typed_dict:
-        TypedDict = ExtensionsTypedDict
+        typed_dict = ExtensionsTypedDict
     else:
-        TypedDict = TypingTypedDict
+        typed_dict = TypingTypedDict
     if use_extension_annotated:
-        Annotated = TypingAnnotated
+        annotated = TypingAnnotated
     else:
-        Annotated = TypingAnnotated
+        annotated = TypingAnnotated
 
-    class SubTool(TypedDict):
+    class SubTool(typed_dict):
         """Subtool docstring"""
 
-        args: Annotated[Dict[str, Any], {}, "this does bar"]  # noqa: F722  # type: ignore
+        args: annotated[Dict[str, Any], {}, "this does bar"]  # noqa: F722  # type: ignore
 
-    class Tool(TypedDict):
+    class Tool(typed_dict):
         """Docstring
 
         Args:
@@ -477,20 +477,20 @@ def test__convert_typed_dict_to_openai_function(
         arg1: str
         arg2: Union[int, str, bool]
         arg3: Optional[List[SubTool]]
-        arg4: Annotated[Literal["bar", "baz"], ..., "this does foo"]  # noqa: F722
-        arg5: Annotated[Optional[float], None]
-        arg6: Annotated[
+        arg4: annotated[Literal["bar", "baz"], ..., "this does foo"]  # noqa: F722
+        arg5: annotated[Optional[float], None]
+        arg6: annotated[
             Optional[Sequence[Mapping[str, Tuple[Iterable[Any], SubTool]]]], []
         ]
-        arg7: Annotated[List[SubTool], ...]
-        arg8: Annotated[Tuple[SubTool], ...]
-        arg9: Annotated[Sequence[SubTool], ...]
-        arg10: Annotated[Iterable[SubTool], ...]
-        arg11: Annotated[Set[SubTool], ...]
-        arg12: Annotated[Dict[str, SubTool], ...]
-        arg13: Annotated[Mapping[str, SubTool], ...]
-        arg14: Annotated[MutableMapping[str, SubTool], ...]
-        arg15: Annotated[bool, False, "flag"]  # noqa: F821  # type: ignore
+        arg7: annotated[List[SubTool], ...]
+        arg8: annotated[Tuple[SubTool], ...]
+        arg9: annotated[Sequence[SubTool], ...]
+        arg10: annotated[Iterable[SubTool], ...]
+        arg11: annotated[Set[SubTool], ...]
+        arg12: annotated[Dict[str, SubTool], ...]
+        arg13: annotated[Mapping[str, SubTool], ...]
+        arg14: annotated[MutableMapping[str, SubTool], ...]
+        arg15: annotated[bool, False, "flag"]  # noqa: F821  # type: ignore
 
     expected = {
         "name": "Tool",

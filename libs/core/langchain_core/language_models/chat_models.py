@@ -23,7 +23,7 @@ from typing import (
     cast,
 )
 
-from typing_extensions import TypedDict
+from typing_extensions import TypedDict, override
 
 from langchain_core._api import deprecated
 from langchain_core.caches import BaseCache
@@ -260,6 +260,7 @@ class BaseChatModel(BaseLanguageModel[BaseMessage], ABC):
     # --- Runnable methods ---
 
     @property
+    @override
     def OutputType(self) -> Any:
         """Get the output type for this runnable."""
         return AnyMessage

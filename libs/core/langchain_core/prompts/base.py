@@ -18,6 +18,7 @@ from typing import (
 )
 
 import yaml
+from typing_extensions import override
 
 from langchain_core.output_parsers.base import BaseOutputParser
 from langchain_core.prompt_values import (
@@ -103,6 +104,7 @@ class BasePromptTemplate(
         arbitrary_types_allowed = True
 
     @property
+    @override
     def OutputType(self) -> Any:
         """Return the output type of the prompt."""
         return Union[StringPromptValue, ChatPromptValueConcrete]
