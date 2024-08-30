@@ -3,7 +3,6 @@ import os
 import pytest
 from dotenv import load_dotenv
 from langchain_core.runnables import RunnableLambda
-from notdiamond import LLMConfig, NotDiamond
 
 from langchain_community.utilities.notdiamond import NotDiamondRoutedRunnable
 
@@ -12,6 +11,7 @@ load_dotenv()
 
 @pytest.fixture
 def nd_routed_runnable() -> NotDiamondRoutedRunnable:
+    from notdiamond import LLMConfig, NotDiamond
     api_key = os.getenv("NOTDIAMOND_API_KEY")
     llm_configs = [
         LLMConfig(provider="openai", model="gpt-4o-2024-08-06"),

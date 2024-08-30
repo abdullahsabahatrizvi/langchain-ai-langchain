@@ -2,7 +2,6 @@ import os
 from importlib import metadata
 from typing import Any, AsyncIterator, Dict, Iterator, List, Sequence
 
-import notdiamond as nd
 from langchain.chat_models.base import init_chat_model
 from langchain_core.language_models import LanguageModelInput
 from langchain_core.messages.utils import convert_to_messages
@@ -27,6 +26,7 @@ class NotDiamondRunnable(Runnable[LanguageModelInput, str]):
     See Runnable docs for details
     https://python.langchain.com/v0.1/docs/expression_language/interface/
     """
+    import notdiamond as nd
 
     llm_configs: List[nd.LLMConfig | str]
     api_key: str | None = os.getenv("NOTDIAMOND_API_KEY")
@@ -129,6 +129,7 @@ class NotDiamondRunnable(Runnable[LanguageModelInput, str]):
 
 
 class NotDiamondRoutedRunnable(Runnable[LanguageModelInput, Any]):
+    import notdiamond as nd
     def __init__(
         self,
         *args: Any,
@@ -153,7 +154,7 @@ class NotDiamondRoutedRunnable(Runnable[LanguageModelInput, Any]):
             *args,
             configurable_fields=self._configurable_fields,
             config_prefix="nd",
-            **{kw: kwv for kw, kwv in kwargs.items() if kw not in _nd_kwargs},
+            **{kw: kwv for kw, kwv in kwargs.items() if kw not in _nd_kwargs},  # type: ignore[arg-type]
         )
 
     def stream(
