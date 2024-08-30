@@ -14,6 +14,7 @@ from langchain_core.messages import (
     ChatMessage,
     HumanMessage,
     SystemMessage,
+    ToolMessage,
 )
 from langchain_core.outputs import ChatGeneration, ChatGenerationChunk, ChatResult
 
@@ -47,6 +48,7 @@ def _chat_stream_response_to_chat_generation_chunk(
     )
 
 
+@deprecated("0.2.36", alternative="langchain_ollama.chat_models.ChatOllama")
 class ChatOllama(BaseChatModel, _OllamaCommon):
     """Ollama locally runs large language models.
 
@@ -121,7 +123,7 @@ class ChatOllama(BaseChatModel, _OllamaCommon):
             role = ""
             if isinstance(message, HumanMessage):
                 role = "user"
-            elif isinstance(message, AIMessage):
+            elif isinstance(message, AIMessage) or isinstance(message, ToolMessage):
                 role = "assistant"
             elif isinstance(message, SystemMessage):
                 role = "system"
