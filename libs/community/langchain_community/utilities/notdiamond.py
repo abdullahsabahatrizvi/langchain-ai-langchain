@@ -1,15 +1,15 @@
-from importlib import metadata
 import os
+from importlib import metadata
 from typing import Any, AsyncIterator, Dict, Iterator, List, Sequence
 
+import notdiamond as nd
 from langchain.chat_models.base import init_chat_model
-from langchain_community.adapters.openai import convert_message_to_dict
 from langchain_core.language_models import LanguageModelInput
 from langchain_core.messages.utils import convert_to_messages
 from langchain_core.prompt_values import ChatPromptValue, PromptValue, StringPromptValue
 from langchain_core.runnables import Runnable, RunnableConfig
 
-import notdiamond as nd
+from langchain_community.adapters.openai import convert_message_to_dict
 
 _USER_AGENT = f"langchain-community/{metadata.version('notdiamond')}"
 _LANGCHAIN_PROVIDERS = {
@@ -41,21 +41,23 @@ class NotDiamondRunnable(Runnable[LanguageModelInput, str]):
         if not nd_client:
             if not nd_api_key or not nd_llm_configs:
                 raise ValueError(
-                    "Must provide either client or api_key and llm_configs to instantiate NotDiamondRunnable."
+                    "Must provide either client or api_key and llm_configs to "
+                    "instantiate NotDiamondRunnable."
                 )
             nd_client = nd.NotDiamond(
                 llm_configs=nd_llm_configs,
                 api_key=nd_api_key,
             )
-
-        for llm_config in nd_client.llm_configs:
-            if isinstance(llm_config, str):
-                llm_config = nd.LLMConfig.from_string(llm_config)
-            if llm_config.provider not in _LANGCHAIN_PROVIDERS:
-                raise ValueError(
-                    f"Requested provider in {llm_config} supported by Not Diamond but not "
-                    "langchain.chat_models.base.init_chat_model. Please remove it from your llm_configs."
-                )
+        elif nd_client.llm_configs:
+            for llm_config in nd_client.llm_configs:
+                if isinstance(llm_config, str):
+                    llm_config = nd.LLMConfig.from_string(llm_config)
+                if llm_config.provider not in _LANGCHAIN_PROVIDERS:
+                    raise ValueError(
+                        f"Requested provider in {llm_config} supported by Not Diamond "
+                        "but not langchain.chat_models.base.init_chat_model. Please "
+                        "remove it from your llm_configs."
+                    )
 
         try:
             nd_client.user_agent = _USER_AGENT
@@ -64,13 +66,12 @@ class NotDiamondRunnable(Runnable[LanguageModelInput, str]):
 
         self.client = nd_client
         self.api_key = nd_client.api_key
-        self.llm_configs = nd_llm_configs
+        self.llm_configs = nd_client.llm_configs
 
     def _model_select(self, input: LanguageModelInput) -> str:
         messages = _convert_input_to_message_dicts(input)
         _, provider = self.client.chat.completions.model_select(messages=messages)
         provider_str = _nd_provider_to_langchain_provider(str(provider))
-        print(provider_str)
         return provider_str
 
     async def _amodel_select(self, input: LanguageModelInput) -> str:
@@ -130,13 +131,13 @@ class NotDiamondRunnable(Runnable[LanguageModelInput, str]):
 class NotDiamondRoutedRunnable(Runnable[LanguageModelInput, Any]):
     def __init__(
         self,
-        *args,
+        *args: Any,
         configurable_fields: List[str] | None = None,
         nd_llm_configs: List[nd.LLMConfig | str] | None = None,
         nd_api_key: str | None = None,
         nd_client: nd.NotDiamond | None = None,
-        **kwargs: Any | None,
-    ):
+        **kwargs: Dict[Any, Any] | None,
+    ) -> None:
         self._ndrunnable = NotDiamondRunnable(
             *args,
             **kwargs,
@@ -151,9 +152,9 @@ class NotDiamondRoutedRunnable(Runnable[LanguageModelInput, Any]):
             configurable_fields = []
         self._configurable_fields = _routed_fields + configurable_fields
         self._configurable_model = init_chat_model(
+            *args,
             configurable_fields=self._configurable_fields,
             config_prefix="nd",
-            *args,
             **{kw: kwv for kw, kwv in kwargs.items() if kw not in _nd_kwargs},
         )
 
