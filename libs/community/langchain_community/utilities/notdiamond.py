@@ -139,8 +139,6 @@ class NotDiamondRoutedRunnable(Runnable[LanguageModelInput, Any]):
         **kwargs: Dict[Any, Any] | None,
     ) -> None:
         self._ndrunnable = NotDiamondRunnable(
-            *args,
-            **kwargs,
             nd_api_key=nd_api_key,
             nd_llm_configs=nd_llm_configs,
             nd_client=nd_client,
