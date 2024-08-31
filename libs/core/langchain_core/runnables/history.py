@@ -388,6 +388,18 @@ class RunnableWithMessageHistory(RunnableBindingBase):
                 fields[self.input_messages_key] = (Sequence[BaseMessage], ...)
             else:
                 fields["__root__"] = (Sequence[BaseMessage], ...)
+
+            if self.bound.get_prompts():
+                for input_variable in self.bound.get_prompts()[0].input_variables:
+                    if (
+                        input_variable != self.input_messages_key
+                        and input_variable != self.history_messages_key
+                    ):
+                        fields[input_variable] = (
+                            Union[str],
+                            ...,
+                        )
+
             return create_model(  # type: ignore[call-overload]
                 "RunnableWithChatHistoryInput",
                 **fields,
